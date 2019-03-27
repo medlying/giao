@@ -10,6 +10,7 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("org.elasticsearch:elasticsearch:2.1.1")
 	}
 }
 
@@ -29,6 +30,24 @@ repositories {
 dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web')
 	implementation('org.springframework.boot:spring-boot-starter-webflux')
+	compile "org.elasticsearch:elasticsearch:2.2.0"
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('io.projectreactor:reactor-test')
+}
+
+task standaloneJar(type: Jar, dependsOn: jar) {
+	baseName = "soda"
+	classifier = "standalone"
+	version = ""
+
+	from files(sourceSets.main.output.classesDir)
+	from files(sourceSets.main.output.resourcesDir)
+
+	from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+	exclude("META-INF/*.SF")
+	exclude("META-INF/*.DSA")
+	exclude("META-INF/*.RSA")
+	exclude("META-INF/*.RSA")
+	exclude("META-INF/*.RSA")
 }
