@@ -45,7 +45,7 @@ public class KPath {
             return numerator - denominator;
         }));
         List<Prime> combine = getCombine(A);
-        for (Prime prime:combine) {
+        for (Prime prime : combine) {
             treeMap.put(prime, 1);
         }
         while (K > 1) {
@@ -67,7 +67,7 @@ public class KPath {
 
         List<Prime> list = getCombine(A);
 
-        for (Prime prime:list) {
+        for (Prime prime : list) {
             if (maxHeap.size() < K) {
                 maxHeap.add(prime);
             } else {
@@ -90,7 +90,7 @@ public class KPath {
     private List<Prime> getCombine(int[] A) {
         List<Prime> list = new ArrayList<>();
         for (int i = 0; i < A.length; i++) {
-            for (int j = i+1; j < A.length; j++) {
+            for (int j = i + 1; j < A.length; j++) {
                 list.add(new Prime(A[i], A[j]));
             }
         }
@@ -109,8 +109,8 @@ public class KPath {
 
     //大神的答案
     public int[] kthSmallestPrimeFractions(int[] A, int K) {
-        int n = A.length, min = A[0], max = A[n-1], p=0, q=0;
-        double lo = (double)min/(double)max, hi = 1.0;
+        int n = A.length, min = A[0], max = A[n - 1], p = 0, q = 0;
+        double lo = (double) min / (double) max, hi = 1.0;
         while (lo < hi) {
             double mid = (lo + hi) / 2.0;
             int[] count = countPairs(A, mid);
@@ -122,41 +122,42 @@ public class KPath {
             if (count[0] < K) lo = mid;
             else hi = mid;
         }
-        return new int[] {p, q};
+        return new int[]{p, q};
     }
 
     private int[] countPairs(int[] A, double x) {
         int count = 0, n = A.length, p = 0, q = 0;
         double max = 0.0;
         for (int i = 0, j = 0; i < n; i++) {
-            while (j < i && A[j] < A[i] * x) j++;
+            while (j < i && A[j] < A[i] * x)
+                j++;
             if (j > 0) {
-                double fraction = (double)A[j-1] / (double)A[i];
+                double fraction = (double) A[j - 1] / (double) A[i];
                 if (max < fraction) {
                     max = fraction;
-                    p = A[j-1];
+                    p = A[j - 1];
                     q = A[i];
                 }
             }
             count += j;
         }
-        return new int[] {count, p, q};
+        return new int[]{count, p, q};
     }
 
     //大神的二分查找
     public int[] kthSmallestPrimeFractionByBinary(int[] A, int K) {
         int n = A.length, x = 0, y = 0, total = 0;
         double l = 0, r = 1;
-        while(total != K) {
+        while (total != K) {
             total = 0;
-            double m = (l + r) /2.0, max = 0.0;
-            for(int i = 0, j = 1; i < n; i++) {
-                while(j < n && A[i] > m * A[j])
+            double m = (l + r) / 2.0, max = 0.0;
+            for (int i = 0, j = 1; i < n; i++) {
+                while (j < n && A[i] > m * A[j])
                     j++;
                 if (j == n || (total += n - j) > K)
                     break;
                 if (A[i] > max * A[j]) {
-                    max = A[i] / (double) A[j] ;
+                    max = A[i] / (double) A[j];
                     x = A[i];
                     y = A[j];
                 }
@@ -166,7 +167,7 @@ public class KPath {
             else
                 l = m;
         }
-        return new int[] {x, y};
+        return new int[]{x, y};
     }
 
     public static void main(String[] args) {
