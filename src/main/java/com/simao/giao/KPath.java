@@ -36,6 +36,25 @@ public class KPath {
         return new int[]{(int) map.keySet().toArray()[0], (int) map.values().toArray()[0]};
     }
 
+    public int[] kthSmallestTreeMap(int[] A, int K) {
+        TreeMap treeMap = new TreeMap<Prime, Prime>(((o1, o2) -> {
+            Integer numerator = o1.numerator * o2.denominator;
+            Integer denominator = o2.numerator * o1.denominator;
+            return numerator - denominator;
+        }));
+        List<Prime> combine = getCombine(A);
+        for (Prime prime:combine) {
+            treeMap.put(prime, 1);
+        }
+        while (K > 1) {
+            treeMap.pollFirstEntry();
+            K--;
+        }
+        Map.Entry entry = treeMap.pollFirstEntry();
+        Prime prime = (Prime) entry.getKey();
+        return new int[]{prime.numerator, prime.denominator};
+    }
+
     //大顶堆
     public int[] kThSmallestFraction(int[] A, int K) {
         Queue<Prime> maxHeap = new PriorityQueue<>(K, (o1, o2) -> {
@@ -89,7 +108,7 @@ public class KPath {
     public static void main(String[] args) {
         int[] init = {1, 2, 3, 5};
         KPath kPath = new KPath();
-        int[] result = kPath.kThSmallestFraction(init, 3);
+        int[] result = kPath.kthSmallestTreeMap(init, 3);
         System.out.println(result[0]);
         System.out.println(result[1]);
     }
