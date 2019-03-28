@@ -14,6 +14,7 @@ import java.util.TreeMap;
  */
 public class KPath {
 
+    //TreeMap 1.0
     public int[] kthSmallestPrimeFraction(int[] A, int K) {
         long sum = 1l;
         for (int i = 1; i < A.length; i++) {
@@ -36,6 +37,7 @@ public class KPath {
         return new int[]{(int) map.keySet().toArray()[0], (int) map.values().toArray()[0]};
     }
 
+    //TreeMap 1.1
     public int[] kthSmallestTreeMap(int[] A, int K) {
         TreeMap treeMap = new TreeMap<Prime, Prime>(((o1, o2) -> {
             Integer numerator = o1.numerator * o2.denominator;
@@ -105,10 +107,72 @@ public class KPath {
         }
     }
 
+    //大神的答案
+    public int[] kthSmallestPrimeFractions(int[] A, int K) {
+        int n = A.length, min = A[0], max = A[n-1], p=0, q=0;
+        double lo = (double)min/(double)max, hi = 1.0;
+        while (lo < hi) {
+            double mid = (lo + hi) / 2.0;
+            int[] count = countPairs(A, mid);
+            if (count[0] == K) {
+                p = count[1];
+                q = count[2];
+                break;
+            }
+            if (count[0] < K) lo = mid;
+            else hi = mid;
+        }
+        return new int[] {p, q};
+    }
+
+    private int[] countPairs(int[] A, double x) {
+        int count = 0, n = A.length, p = 0, q = 0;
+        double max = 0.0;
+        for (int i = 0, j = 0; i < n; i++) {
+            while (j < i && A[j] < A[i] * x) j++;
+            if (j > 0) {
+                double fraction = (double)A[j-1] / (double)A[i];
+                if (max < fraction) {
+                    max = fraction;
+                    p = A[j-1];
+                    q = A[i];
+                }
+            }
+            count += j;
+        }
+        return new int[] {count, p, q};
+    }
+
+    //大神的二分查找
+    public int[] kthSmallestPrimeFractionByBinary(int[] A, int K) {
+        int n = A.length, x = 0, y = 0, total = 0;
+        double l = 0, r = 1;
+        while(total != K) {
+            total = 0;
+            double m = (l + r) /2.0, max = 0.0;
+            for(int i = 0, j = 1; i < n; i++) {
+                while(j < n && A[i] > m * A[j])
+                    j++;
+                if (j == n || (total += n - j) > K)
+                    break;
+                if (A[i] > max * A[j]) {
+                    max = A[i] / (double) A[j] ;
+                    x = A[i];
+                    y = A[j];
+                }
+            }
+            if (total > K)
+                r = m;
+            else
+                l = m;
+        }
+        return new int[] {x, y};
+    }
+
     public static void main(String[] args) {
         int[] init = {1, 2, 3, 5};
         KPath kPath = new KPath();
-        int[] result = kPath.kthSmallestTreeMap(init, 3);
+        int[] result = kPath.kthSmallestPrimeFractionByBinary(init, 3);
         System.out.println(result[0]);
         System.out.println(result[1]);
     }
